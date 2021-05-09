@@ -1,93 +1,117 @@
+describe("Testcase", function(){
 
-describe('test cases',function() {
-    it('1st test',function() {
-        cy.visit('https://www.aceinvoice.com')   //cy.request()  is generating error
-        cy.get('#navbarSupportedContent > ul > li:nth-child(6) > a').click()
-        // cy.get('#navbarSupportedContent').should('contain','Sign up for FREE').click()
+	beforeEach(() => {
+	    Cypress.Cookies.preserveOnce('_aceinvoice_session')
+  })
 
-         const now = new Date()
-         var now1 =now.getUTCMonth()
+	it("Visit URL", function(){
+		cy.visit("https://www.aceinvoice.com/")
+	})
 
-         var arry=["January","February","march","april","may","june","july","august","september","october","november","december"];
-         function months(now1) {
-          return arry[now1];
-         }
-         function date(){
-         var now2 =now.getUTCDate() 
-         return now2;  }
+	it("Sign Up and Negative assertion", function(){
+		cy.get('#navbarSupportedContent > ul > li:nth-child(6) > a').should('contain','Sign up for FREE')
+		cy.get('#navbarSupportedContent > ul > li:nth-child(6) > a').click()
+	})
 
-         function year(){
-          var now3 =now.getUTCFullYear() 
-         return now3;  }
+	it("Enter Email and Password", function(){
 
-         function hour(){
-          var now4 =now.getUTCHours() 
-         return now4;  }
+        const now = new Date()
+        var now1 =now.getUTCMonth()
 
-         function minutes(){
-          var now5 =now.getUTCMinutes() 
-         return now5;  }
+        var arry=["January","February","march","april","may","june","july","august","september","october","november","december"];
+        function months(now1) {
+         return arry[now1];
+        }
+        function date(){
+        var now2 =now.getUTCDate()
+        return now2;  }
 
-         function miliseconds(){
-          var now6 =now.getUTCMilliseconds() 
-         return now6;  }
+        function year(){
+         var now3 =now.getUTCFullYear()
+        return now3;  }
 
-        cy.get("[data-test-id='signup-email']").type('59482357'+'-'+ months(now1)+'-'+date()+'-'+year()+'-'+hour()+'-'+minutes()+'-'+miliseconds()+'@example.com')
+        function hour(){
+         var now4 =now.getUTCHours()
+        return now4;  }
 
-        cy.get("[data-test-id='signup-submit']").click()
-        cy.get("[data-test-id='signup-password']").type("welcome1234!")
-        cy.get("[data-test-id='signup-continue']").click()
-        cy.get("[data-test-id='introduction-first-name']").type('Oliver')
-        cy.get("[data-test-id='introduction-last-name']").type('Smith')
+        function minutes(){
+         var now5 =now.getUTCMinutes()
+        return now5;  }
 
-       
-        cy.get("[data-test-id='introduction-timezone']").select('(GMT+05:30) New Delhi').should('have.value','New Delhi')
-        cy.get("[data-test-id='introduction-timezone-124']").click({force: true})
+        function miliseconds(){
+         var now6 =now.getUTCMilliseconds()
+        return now6;  }
 
-        cy.get('body > div:nth-child(3) > div > div.page-wrap > div > div > div > div.bg-white.floating-box.page-content.form-page.onboarding-info.p-5 > form > div:nth-child(4) > div > div > div > div:nth-child(2) > div > label > div.control__indicator').should('be.visible').should('not.be.checked').click()
-        cy.get("[data-test-id=introduction-terms-service-input]").click({force: true})
-        cy.get("[data-test-id=introduction-marketing-email-consent-input]").click({force: true})
-        cy.get("[data-test-id=introduction-submit]").click()
-        cy.get("[data-test-id='organization-name']").type('neerajdotname Private Limited')
-        cy.get("[data-test-id='organization-submit']").click()
+       cy.get("[data-test-id='signup-email']").type('59482357'+'-'+ months(now1)+'-'+date()+'-'+year()+'-'+hour()+'-'+minutes()+'-'+miliseconds()+'@example.com')
+       cy.get("[data-test-id='signup-submit']").should('be.visible').click()
+       cy.get("[data-test-id='signup-password']").should('be.visible').should('be.enabled').type("welcome1234!")
+       cy.get("[data-test-id='signup-continue']").should('be.visible').click()
+	} )
+
+	it("Enter Name", function(){
+        cy.get("[data-test-id='introduction-first-name']").should('be.visible').should('be.enabled').type('Oliver')
+        cy.get("[data-test-id='introduction-first-name']").should('have.value','Oliver')
+        cy.get("[data-test-id='introduction-last-name']").should('be.visible').should('be.enabled').type('Smith')
+        cy.get("[data-test-id='introduction-last-name']").should('have.value','Smith')
+	} )
+
+	it("Select Time Zone", function(){
+    
+	cy.get('#react-select-2-input').should('be.visible').click()
+    cy.get('#react-select-2-input').type('New Delhi').type('{enter}')
+	//cy.get('#react-select-2-input').should('contain','(GMT+05:30) New Delhi')
+	} )
+	it("Select radio", function(){
+		cy.get("[type='radio']").check('%d/%m/%Y',{force:true})
+		cy.get("[type='checkbox']").check({force:true} )
+		cy.get("[data-test-id=introduction-submit]").should('contain','Continue').click()
+	} )
+
+	it("Enter Company Name", function(){
+		cy.get("input[name='name']").should('be.visible').should('be.enabled').type("neerajdotname Private Limited")
+        cy.get("[data-test-id='introduction-submit']").click()
         cy.get("[data-test-id='client-form-skip']").click()
-        cy.get('body > div:nth-child(3) > div > div.page-wrap > div > div > div > div > div > div > div > div > h4').should("contain","Congratulations, you're all set!")
-        cy.get("[data-test-id='onboarding-continue']").click()
+	} )
 
-        //cy.wait(5000)
-        cy.get('body > div:nth-child(3) > div > div.header > div.header.verification-banner.py-2').should('contain','Verification email sent to')
+	it("Assert 1 and continue", function(){
+		cy.get(".pl-4").contains("Congratulations, you're all set!")
+		cy.get("button[data-test-id=onboarding-continue]").should('be.visible').should('be.enabled').click()
+	} )
 
-        cy.get("[data-test-id='header-clients']").click()
-        cy.get("[data-test-id='client-add-new']").click()
-        cy.get("[data-test-id='client-name']").type('Trix Inc')
-        cy.get("[data-test-id='client-submit']").click() 
-        cy.get("[data-test-id='project-add-new']").should("contain","Add New Project")
-        cy.get("[data-test-id='project-name']").type('Trix Web Development')
-        cy.get('[name=billingMethod]').select('hourly_project_rate').should('have.value','hourly_project_rate')
+	it("Click On Client and Add new one", function(){
+		cy.get(".ri-user-star-line").should('be.visible').should('not.be.enabled').click()
+		cy.get("[data-test-id='client-add-new']").should('be.visible').should('not.be.enabled').click()
+	} )
 
-        
-        //cy.get("[data-test-id=project-rate]").click({force: true})
-        cy.get("[data-test-id='project-rate']").type('20')
-        
-        cy.get("[data-test-id='project-name']").should('have.value','Trix Web Development')
-        cy.get("[data-test-id='project-billing-method']").should('have.value','hourly_project_rate') 
-       //cy.get('[data-test-id="project-hourly-rate"]').should('contain','$20.00')
-        cy.get("[data-test-id=body]").should('contain','No rounding')   
-        cy.get('[data-test-id=project-team-member-table-name-1]').should('contain','Oliver Smith')
+	it("Enter Client Name and submit", function() {
+		cy.get("[data-test-id='client-name']").should('be.visible').should('be.enabled').type("Trix Inc")
+		cy.get("[data-test-id='client-submit']").should('be.visible').should('be.enabled').click()
+	} )
 
+	it("Assert ", function(){
+		cy.get("[data-test-id=project-add-new]").contains("Add New Project")
+	} )
 
+	it("Enter Client Name", function(){
+		cy.get("[data-test-id=project-name]").type("Trix Web Development")
+	} )
+ 
+	it("Select Billing Method", function(){ 
+		cy.get('#react-select-5-input').type('Hourly project rate',{force: true}).type('{enter}')
+	} )
+	it("Enter Amount", function(){
+		cy.get("input[data-test-id='project-rate']").clear().type(20)
+	} )
 
+	it("Click on Add-New-Project Submit", function(){
+		cy.get("[data-test-id='project-save']").click()
+	} )
 
+	it("Assert of name, rate, rounding, person name", function() {
+		cy.get("[data-test-id=project-name]").should('have.value',"Trix Web Development");
+		cy.get("[data-test-id='project-hourly-rate']").contains("$20.00")
+		cy.get("div span").contains("No rounding")
+		cy.get("[data-test-id=project-team-member-table-name-1]").contains("Oliver Smith")
+	} )
 
-
-
-
-      
-    })
-})
-
-/*Crypto.on('uncaught:exception', (err, runnable) => {
-// returning false here prevents Cypress from
-// failing the test
-return false
-})*/
+} )
